@@ -16,7 +16,7 @@
 Repository containing all materials needed to replicate chapter 2 of my book project.
 
 
-For details on the file structure, please see the [repository&#39;s wiki](https://github.com/DamonCharlesRoberts/color_as_political_information/wiki).
+For details on the file structure, please see the [repository&#39;s wiki](https://github.com/DamonCharlesRoberts/dissertation/wiki).
 
 
 ## Maintainers
