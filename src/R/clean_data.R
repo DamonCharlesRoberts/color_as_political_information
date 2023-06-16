@@ -235,8 +235,8 @@ extract_file <- function(df_temp) {
         , "pid_3"
         , "pid_d_str"
         , "pid_r_str"
-        , "pid_ind_str"
-        , "attention_chk_1"
+        , "ind_lean"
+        , "attn_chk_1"
         , "trial_1_party"
         , "trial_2_party"
         , "trial_3_party"
@@ -375,7 +375,9 @@ extract_file <- function(df_temp) {
 #' 
 #' @examples
 #'
-clean_data <- function(folder) {
+clean_data <- function(
+  folder
+  , prolific_data) {
     # Read all of the csv files
       #* Get a list of file names for the csv's; the full paths.
     list_filenames <- base::list.files(
@@ -395,10 +397,27 @@ clean_data <- function(folder) {
         , FUN = extract_file
     )
     # Collapse the list of cleaned dataframes into one dataframe
-    df_return <- data.table::rbindlist(
+    df_clean <- data.table::rbindlist(
       list_dataframes
       , fill = TRUE
     )
-    # Return final data.frame
-    return(df_return)
+    # Merge with the prolific data
+    df_prolific <- utils::read.csv(
+      file = prolific_data
+    )
+    df_merged <- base::merge(
+      df_clean
+      , df_prolific
+      , by.x = c("submission_id", "participant_id")
+      , by.y = c("Submission.id", "Participant.id")
+    )
+    # Store the resulting data.frame in a csv
+    utils::write.csv(
+      df_merged
+      , file = "../data/clean/extracted_pavlovia.csv"
+    )
+    # Remove duplicated rows (from participants starting and restarting)
+    df_cleaned <- base::unique(df_merged, by = "submission_id")
+    # Return dataframe
+    return(df_cleaned)
 }
