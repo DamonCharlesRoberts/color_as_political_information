@@ -149,6 +149,13 @@ list_df[["cleaned"]] <- list_df[["cleaned"]][
     trial_3_stimulus != "Blue", 0
     , trial_3_stimulus == "Blue", 1
   )
+][
+  #* Turn trial_#_party outcome into factor
+  , trial_1_party := factor(trial_1_party, ordered = TRUE)
+][
+  , trial_2_party := factor(trial_2_party, ordered = TRUE)
+][
+  , trial_3_party := factor(trial_3_party, ordered = TRUE)
 ]
 
 # Store the cleaned data in a RData temp file
