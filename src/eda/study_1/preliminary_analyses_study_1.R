@@ -30,13 +30,13 @@ list_fitted <- list(
 # Hypothesis 1
 
 # Hypothesis 2
-models[["h_2"]][["red"]] <- brm(
+list_fitted[["h_2"]][["red"]] <- brm(
     formula = factor(trial_1_party, ordered = TRUE) ~ trial_1_red_stimuli
     , data = list_df[["cleaned"]]
     , family = cumulative(link = "logit")
     , prior = set_prior("normal(0, 1)", class = "b")
 )
-models[["h_2"]][["blue"]] <- brm(
+list_fitted[["h_2"]][["blue"]] <- brm(
     formula = factor(trial_1_party, ordered = TRUE) ~ trial_1_blue_stimuli
     , data = list_df[["cleaned"]]
     , family = cumulative(link = "logit")
