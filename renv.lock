@@ -384,6 +384,22 @@
       ],
       "Hash": "3f038e5ac7f41d4ac41ce658c85e3042"
     },
+    "cmdstanr": {
+      "Package": "cmdstanr",
+      "Version": "0.5.3",
+      "Source": "unknown",
+      "Requirements": [
+        "R",
+        "R6",
+        "checkmate",
+        "data.table",
+        "jsonlite",
+        "posterior",
+        "processx",
+        "withr"
+      ],
+      "Hash": "c91c8643a5d25fb7aebb1e8031f6cdca"
+    },
     "coda": {
       "Package": "coda",
       "Version": "0.19-4",

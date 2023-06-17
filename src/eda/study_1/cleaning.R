@@ -121,32 +121,32 @@ list_df[["cleaned"]] <- list_df[["cleaned"]][
 ][
   #** convert stimuli into dummies
   , trial_1_red_stimuli := fcase(
-    trial_1_stimulus != "Red", 0
+    trial_1_stimulus == "White", 0
     , trial_1_stimulus == "Red", 1
   )
 ][
   , trial_1_blue_stimuli := fcase(
-    trial_1_stimulus != "Blue", 0
+    trial_1_stimulus == "White", 0
     , trial_1_stimulus == "Blue", 1
   )
 ][
   , trial_2_red_stimuli := fcase(
-    trial_2_stimulus != "Red", 0
+    trial_2_stimulus == "White", 0
     , trial_2_stimulus == "Red", 1
   )
 ][
   , trial_2_blue_stimuli := fcase(
-    trial_2_stimulus != "Blue", 0
+    trial_2_stimulus == "White", 0
     , trial_2_stimulus == "Blue", 1
   )
 ][
   , trial_3_red_stimuli := fcase(
-    trial_3_stimulus != "Red", 0
+    trial_3_stimulus == "White", 0
     , trial_3_stimulus == "Red", 1
   )
 ][
   , trial_3_blue_stimuli := fcase(
-    trial_3_stimulus != "Blue", 0
+    trial_3_stimulus == "White", 0
     , trial_3_stimulus == "Blue", 1
   )
 ][

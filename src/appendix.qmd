@@ -1,0 +1,194 @@
+# Chapter 2 Appendix {#sec-2-a}
+
+```{r}
+#| label: setup
+
+# Load helpful functions
+box::use(
+  modelsummary[
+    modelsummary
+  ]
+)
+
+# Load fitted models and ppc checks
+load(
+  file = "../data/temp/models/study_1_fitted.RData"
+)
+```
+
+## Measures
+
+## Hypothesis 1
+
+### Models
+
+### Posterior Predictive Checks
+
+## Hypothesis 2
+
+### Models
+
+
+```{r}
+#| label: tbl-hypothesis-2-main
+#| tbl-cap: Full results for models in $H_2$
+
+# Redefine names
+list_fitted_split_1 <- list(
+  "Red treatment" = list_fitted[["h_2"]][["red"]]
+  , "Blue treatment" = list_fitted[["h_2"]][["blue"]]
+)
+
+# Change goodness of fit stuff
+gm <- list(
+  list("raw" = "nobs", "clean" = "Num.Obs.", "fmt" = 1)
+  , list("raw" = "r.squared", "clean" = "$R^2$", "fmt" = 2)
+  , list("raw" = "waic", "clean" = "WAIC", "fmt" = 2)
+)
+# Make table
+modelsummary(
+  list_fitted_split_1
+  , coef_map = c(
+    "b_trial_1_red_stimuli" = "Red yard sign"
+    , "b_trial_1_blue_stimuli" = "Blue yard sign"
+    , "b_age" = "Age"
+    , "b_Intercept[1]" = "Intercept 1"
+    , "b_Intercept[2]" = "Intercept 2"
+    )
+  , statistic = "conf.int"
+  , gof_map = gm 
+  , notes = c(
+    "Data source: Pavlovia"
+    , "Positive coefficients reflect the logged-odds of claiming candidate is Republican."
+    , "Numbers inside brackets reflect the 5th and 95th percentile of the draws from the posterior distribution."
+  )
+  , escape = FALSE
+  , output = "latex"
+)
+```
+
+```{r}
+#| label: tbl-hypothesis-2-interact
+#| tbl-cap: Full results for models in $H_2$ (cont.)
+
+# Redefine names
+list_fitted_split_2 <- list(
+  "Moderated - Red treatment" = list_fitted[["h_2"]][["red_interact"]]
+  , "Moderated - Blue treatment" = list_fitted[["h_2"]][["blue_interact"]]
+)
+
+# Make table
+modelsummary(
+  list_fitted_split_2
+  , coef_map = c(
+    "b_trial_1_red_stimuli" = "Red yard sign"
+    , "b_trial_1_blue_stimuli" = "Blue yard sign"
+    , "b_age" = "Age"
+    , "b_trial_1_red_stimuli:age" = "Red yard sign $\\times$ Age"
+    , "b_trial_1_blue_stimuli:age" = "Blue yard sign $\\times$ Age"
+    , "b_Intercept[1]" = "Intercept 1"
+    , "b_Intercept[2]" = "Intercept 2"
+    )
+  , statistic = "conf.int"
+  , gof_map = gm 
+  , notes = c(
+    "Data source: Pavlovia"
+    , "Positive coefficients reflect the logged-odds of claiming candidate is Republican."
+    , "Numbers inside brackets reflect the 5th and 95th percentile of the draws from the posterior distribution."
+  )
+  , escape = FALSE
+  , output = "latex"
+)
+```
+
+### Posterior Predictive Checks
+```{r}
+#| label: fig-h-2-ppc
+#| layout-ncol: 2
+#| fig-cap: Posterior predictive checks of models in $H_2$
+#| fig-subcap:
+#|   - Red treatment
+#|   - Blue treatment
+#|   - Red treatment (Moderated)
+#|   - Blue treatment (Moderated)
+
+list_ppc[["h_2"]][["red"]]
+list_ppc[["h_2"]][["blue"]]
+list_ppc[["h_2"]][["red_interact"]]
+list_ppc[["h_2"]][["blue_interact"]]
+```
+
+## Hypothesis 3
+
+{{< pagebreak >}}
+\blandscape
+
+### Models
+
+
+```{r}
+#| label: tbl-hypothesis-3
+#| tbl-cap: Full results for models in $H_3$
+# Redefine names
+model_names <- list(
+  "Trial 2 - Red treatment"
+  , "Trial 2 - Blue treatment"
+  , "Trial 3 - Red treatment"
+  , "Trial 3 - Blue treatment"
+)
+names(list_fitted[["h_3"]]) <- model_names
+
+# Change goodness of fit stuff
+gm <- list(
+  list("raw" = "nobs", "clean" = "Num.Obs.", "fmt" = 1)
+  , list("raw" = "r.squared", "clean" = "$R^2$", "fmt" = 2)
+  , list("raw" = "waic", "clean" = "WAIC", "fmt" = 2)
+)
+# Make table
+modelsummary(
+  list_fitted[["h_3"]]
+  , coef_map = c(
+    "b_trial_2_red_stimuli" = "Red yard sign"
+    , "b_trial_2_blue_stimuli" = "Blue yard sign"
+    , "b_trial_3_red_stimuli" = "Red yard sign"
+    , "b_trial_3_blue_stimuli" = "Blue yard sign"
+    , "b_Intercept[1]" = "Intercept 1"
+    , "b_Intercept[2]" = "Intercept 2"
+    )
+  , statistic = "conf.int"
+  , gof_map = gm 
+  , notes = c(
+    "Data source: Pavlovia"
+    , "Positive coefficients reflect the logged-odds of claiming candidate is Republican."
+    , "Numbers inside brackets reflect the 5th and 95th percentile of the draws from the posterior distribution."
+  )
+  , escape = FALSE
+  , output = "latex"
+)
+```
+
+\elandscape
+{{< pagebreak >}}
+
+### Posterior Predictive Checks
+```{r}
+#| label: fig-h-3-ppc
+#| layout-ncol: 2
+#| fig-cap: Posterior predictive checks of models in $H_2$
+#| fig-subcap:
+#|   - Red treatment (Trial 2)
+#|   - Blue treatment (Trial 2)
+#|   - Red treatment (Trial 3)
+#|   - Blue treatment (Trial 3)
+
+list_ppc[["h_3"]][["trial_2_red"]]
+list_ppc[["h_3"]][["trial_2_blue"]]
+list_ppc[["h_3"]][["trial_3_red"]]
+list_ppc[["h_3"]][["trial_3_blue"]]
+```
+
+## Hypothesis 4
+
+### Models
+
+### Posterior Predictive Checks

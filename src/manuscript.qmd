@@ -7,24 +7,26 @@
         * Writing:
 -->
 
-# Introduction
+## Introduction
 
-![Republicans pre-2000](../../assets/rnc_logo_pre-2000.png){#fig-republican}
+::: {#fig-party-brand layout-ncol=2}
 
-![Democrats pre-2000](../../assets/dnc_logo_1960.png){#fig-democrat}
+![Republicans pre-2000](assets/img/rnc_logo_pre-2000.png){#fig-republican}
 
-![Republicans 2023](../../assets/rnc_logo_2023.png){#fig-republican-post}
+![Democrats pre-2000](assets/img/dnc_logo_1960.png){#fig-democrat}
 
-![Democrats 2023](../../assets/dnc_logo_2023.png){#fig-democrat-post}
+![Republicans 2023](assets/img/rnc_logo_2023.png){#fig-republican-post}
+
+![Democrats 2023](assets/img/dnc_logo_2023.png){#fig-democrat-post}
 
 Party logos
 :::
 
-# What do we know about color, politics, and attitude formation?
+## What do we know about color, politics, and attitude formation?
 
-# Building an intuition for color's effect on politics
+## Building an intuition for color's effect on politics
 
-# Study 1
+## Study 1
 
 ```{r}
 #| label: study-1-setup
@@ -35,6 +37,7 @@ box::use(
     , modelsummary[
         datasummary_skim
     ]
+    , ./R/predicted_prob_bar[...]
 )
 
 # Execute the cleaning script
@@ -45,7 +48,7 @@ load("../data/temp/models/study_1_fitted.RData")
 
 The purpose of [Study 1](#sec-study-1) is to examine whether the color choices on an almost ubiquitus form of campaign branding -- yard signs -- influence people's perceptions of political candidates. Evidence suggests that yard signs *do* matter in shaping political attitudes [@makse_et-al_2019_oup], vote intentions [@makse_et-al_2019_oup], and even electoral outcomes [@green_et-al_2016_es]. As they are simple, cheap, intrusive, and common forms of campaign branding, they provide a conservative test of the effects of color in campaign branding. Using yard signs in this study, I test the first four hypotheses I derive from the snap-judgment model. First, [Study 1](#sec-study-1) tests the claim that individuals do indeed notice the color of electoral yard signs. Next, it tests the claim that these colors that individuals detect influence the viewer's evaluations of the yard sign and the candidate represented on it. [Study 1](#sec-study-1) then tests the claim that the effects on perception are moderated by how consistent the color is with the more complex information displayed on the yard sign. Finally, [Study 1](#sec-study-1) examines whether positive information that contains consistency is processed quicker than negative or inconsistent information. That is, do partisans quickly detect and encode information from a clearly co-partisan political candidate?
 
-## Research design
+### Research design
 
 I recruit participants from Prolific.[^color_influence_pre-reg_anon-3] After providing informed consent to participate in the study, Prolific redirects subjects to Pavlovia[^color_influence_pre-reg_anon-4] and are provided with a demographics and political attitudes questionnaire. As I am concerned about priming effects introduced by these questions, while I am simultaneously concerned about bias introduced by post-treatment control [@montgomery_et-al_2018_ajps], I randomly select half of the participants to receive the questionnaire post-treatment and the other half receive it pre-treatment. This questionnaire includes common questions about the participant's ascriptive and descriptive characteristics and about the participant's political ideology, partisan identification, interest in politics, patriotism, and political knowledge.
 
@@ -80,100 +83,115 @@ There are three more trials that are much like the first trial. What is differen
 #| tbl-cap: Descriptive statistics of Prolific sample
 
 df_demographics_subset <- list_df[["cleaned"]][
-    , c(
-        "age"
-        , "color_blind_dummy"
-        , "female_id"
-        , "white"
-        , "hispanic"
-        , "black"
-        , "pid_7"
+    , .(
+        Age = age
+        , `Color blind` = color_blind_dummy
+        , Female = female_sex
+        , White = white
+        , Hispanic = hispanic
+        , Black = black
+        , `Party ID` = pid_7
     )
-]
-setnames(
-    df_demographics_subset
-    , old = c(
-        "Age"
-        , "Color blind"
-        , "Female"
-        , "White"
-        , "Hispanic"
-        , "Black"
-        , "Party ID"
-    )
-)
+] |> 
+as.data.frame()
+
 datasummary_skim(
     df_demographics_subset
+    , histogram = FALSE
+    , notes = c(
+      "Data source: Pavlovia."
+      , "Sample characteristics."
+    )
 )
 ```
 
-## Do individuals notice color in political branding?
+### Do individuals notice color in political branding?
 
 To address this first question, I use two measures of a participant's attention toward the colors on the yard sign. I collected the first measure through a question posed to the participant after viewing each yard sign, "what color was the yard sign?". The second measure is more implicit than the first: it accounts for the time someone's mouse hovered over the non-text elements of the yard sign relative to how long their mouse hovered over the text. The self-reported measure allows us to examine the conscious detection of color, while the more implicit measure allows us to examine where individuals' attention goes: toward the color or the text.
 
 This is primarily a descriptive exercise, and I intend to compare the differences in measures between the "non-partisan" (white) yard signs and the partisan (red and blue) yard signs. I will examine the differences in measures between the partisan yard signs among self-identified partisan respondents. I additionally include additional models that interact partisanship with age and political knowledge. As the consistent usage by the parties to use the colors red and blue did not occur until the 2000 presidential election, those that were in their early adult years during that time experienced partisan politics where colors were not a strong cue. I additionally expect that those who are more politically knowledgeable should rely on these partisan cues more as they tend to be stronger partisans [@delli-carpini_keeter_1996_yup].
 
-## Do colors shape perceptions of political objects?
+### Do colors shape perceptions of political objects?
 
-To address the following question of whether the colors affect perceptions of the candidate and the yard sign, I ask participants to report whether they perceived the candidate to be a partisan -- either Republican, Democrat, or as non-partisan immediately after viewing each image. Everything on the yard signs remains constant except for the color. As representations of ideology are associated with more than just political views but things like space [@mills_et-al_2016_bbr] and color [@maestre_medero_2022_pr], differences between respondents on the perceived political affiliations of the candidate should be more than stochastic differences. However, differences occur based on the associations between red and blue with partisanship and the lack of political information that the color white conveys.
+To address the following question of whether the colors affect perceptions of the candidate and the yard sign, I ask participants to report whether they perceived the candidate to be a partisan -- either Republican, Democrat, or as non-partisan immediately after viewing each image. Everything on the yard signs remains constant except for the color. As representations of ideology are associated with more than just political views but things like space [@mills_et-al_2016_bbr] and color [@maestre_medero_2022_pr], differences between respondents on the perceived political affiliations of the candidate should be more than "by chance" differences. However, differences occur based on the associations between red and blue with partisanship and the lack of political information that the color white conveys.
 
 I examine differences in respondents' reported perceptions of the candidate's partisan affiliation. As participants are asked this question for each treatment they view, the estimand of interest reflects the difference in perceptions of the candidate's partisan affiliation between the yard sign that they saw averaged across respondents. I estimate two ordered logistic regression where the main independent variables of interest are two indicator variables for whether respondents received the "red yard sign" or the "blue yard sign" in each round of Trial 1. The baseline category for both of those indicator variables is if they instead saw the "white yard sign".
 
+My defined priors for both of these models' coefficients are Normally distributed with a mean of zero and a standard deviation of one. This reflects me starting from the position that my data need to provide evidence in support of my hypotheses rather than disproving them. The priors do allow for me to express uncertainty with this as I do have a belief that there is a chance my hypotheses are correct. Both models return $\hat{R}$ values of 1 indicating convergence and I confirm model performance by reporting the distributions of predicted values implied by my posterior distribution. These posterior predictive checks are included in the appendix.
+
+@fig-h-2-predictions present the predicted probabilities of a subject reporting the candidate was either a Democrat, Independent, or Republican when viewing the different yard signs. The error bars reflect the high density credible interval for 95% of my posterior draws. Each bar reflects the predicted probability of an outcome -- listing the candidate is either a Democrat, Independent, or Republican. When interpreting the error bars, you will want to look at the difference in the error bars *between* yard sign treatments rather than *within* treatment. We see that the models indicate statistically meaningful differences between the yard sign treatments for each outcome. That is, the red and blue yard signs did shift people's perceptions of the partisanship of the candidate relative to the white yard sign. The credible intervals of these models are reported in the appendix in the table containing the rest of the results from these models.
+
+Digging in a little bit more about what these perceptions were, the predicted probability that subjects perceive the candidate with a Red yard sign to be Republican is almost 70%, whereas it is only about 30% when viewing a white yard sign. When given a red yard sign, the predicted probability the candidate is marked to be an independent is less than 30% and less than 5% to be a Democrat. However, when viewing a blue yard sign, the predicted probability of a subject perceiving the candidate to be a Democrat is at about 50% whereas it is less than 20% with a white yard sign. When viewing a blue yard sign, the predicted probability of subjects perceiving the candidate to be a Republican is less than 10% and about 45% to be an Independent. The tables for the models are included in the appendix.
+
 ```{r}
-#| label: h-2-predictions
-predicted_prob <- marginaleffects::plot_predictions(
-  list_fitted[["h_2"]][["red"]]
-  , condition = "trial_1_red_stimuli"
-) +
-facet_wrap(~group) +
-theme_minimal()
-
-predicted_prob <- marginaleffects::predictions(
-  list_fitted[["h_2"]][["red"]]
-)|>
-as.data.table()
-predicted_prob_bar <- predicted_prob[
-  , .(estimate = mean(estimate), conf.low = mean(conf.low), conf.high = mean(conf.high)), by = c("group", "trial_1_red_stimuli")
-][
-  , trial_1_red_stimuli := factor(trial_1_red_stimuli)
-][
-  , group := factor(group)
-]
-
-ggplot(data = predicted_prob_bar) +
-geom_bar(
-  aes(x = trial_1_red_stimuli, y = estimate, fill = group)
-  , stat = "identity"
-  , position = "dodge"
-) + 
-geom_errorbar(
-  aes(x = trial_1_red_stimuli, ymin = conf.low, ymax = conf.high, linetype = group)
-  , position = "dodge"
-) +
-scale_x_discrete(labels = c("Other", "Red")) +
-scale_fill_manual(labels = c("Democrat", "Independent", "Republican"), values = c("#00AEF3", "#808080", "#ff0803")) +
-scale_linetype_manual(labels = c("Democrat", "Independent", "Republican"), values = c("solid", "solid", "solid")) +
-labs(
-  x = "Color of yard sign"
-  , y = "Pr(Party of candidate)"
-  , linetype = "Party of candidate"
-  , fill = "Party of candidate"
-) +
-theme_minimal()
+#| label: fig-h-2-predictions
+#| layout-nrow: 1
+#| fig-cap: The partisanship of candidates change depending on the color of the yard sign
+#| fig-subcap:
+#|   - Red treatment
+#|   - Blue treatment
+red <- predicted_prob_bar(
+  fitted_model = list_fitted[["h_2"]][["red"]]
+  , x_axis = "trial_1_red_stimuli"
+)
+blue <- predicted_prob_bar(
+  fitted_model = list_fitted[["h_2"]][["blue"]]
+  , x_axis = "trial_1_blue_stimuli"
+  , treatment = "Blue"
+)
+red
+blue
 ```
 
 As the consistency by which the parties have used either the color red or blue has increased since the 2000's, I suspect that the age of my subjects may moderate this relationship. That is, the tendency for subjects to label red yard signs as a Republican candidate versus a different color may be stronger for those who are younger as the consistency in branding is the political environment they have been around more. I expect this particular relationship may be weaker for older subjects as they may place current branding strategies in a larger political context where this was not always the case.
 
-## Do these perceptions require consistency between information types?
+I fit two ordered logistic regressions where the independent variables are indicator variables reporting whether the participant received the red (the first model) or they recieved the blue treatment (the second model). Those included in the baseline category for both models are those who received the white yard sign treatment. Since I believe that age may moderate this effect, I include an interaction term for both of these models that multiplies these treatment indicator variables with age. 
+
+Though my pre-registered expectations were that age would moderate this effect, these models suggest that there are not substantive or statistically meaningful differences in how older and younger participants responded to these treatments. The results of these models are included in the appendix.
+
+### Do these perceptions require consistency between information types?
 
 Another hypothesis derived from the snap-judgment model suggests that inconsistency in the yard sign's visual information will lead to more mixed perceptions of the candidate's political stances. The design of the latter trials in the study presents yard signs with mixtures of non-partisan and out-partisan colors. For example, primarily red and presumably Republican yard signs, but has some blue or white in them.
 
 I should expect that the trials that use less "consistent" visual information demonstrate more ambivalence among respondents in their reported perceptions of the politician's positions. Specifically, I expect that participants will perceive the yard signs that have both red and blue on them as more moderate and that the higher proportion of the color red or blue among the two colors will lead respondents, on average, to be more likely to believe that the candidate leans more Republican or Democratic. This is not to say that I expect the results to change significantly, but rather that the certainty by which I can predict individuals' guesses of the candidate's partisan affiliation to be weaker.
 
-## Do partisans process co-partisan branding faster?
+```{r}
+#| label: fig-h-3-predictions
+#| layout-nrow: 2
+#| fig-cap: Mixing red and blue in a yard sign increases uncertainty about partisanship
+#| fig-subcap:
+#|   - Trial 2 Red treatment
+#|   - Trial 2 Blue treatment
+#|   - Trial 3 Red treatment
+#|   - Trial 3 Blue treatment
+plot_trial_2_red <- predicted_prob_bar(
+  fitted_model = list_fitted[["h_3"]][["trial_2_red"]]
+  , x_axis = "trial_2_red_stimuli"
+)
+plot_trial_2_blue <- predicted_prob_bar(
+  fitted_model = list_fitted[["h_3"]][["trial_2_blue"]]
+  , x_axis = "trial_2_blue_stimuli"
+  , treatment = "Blue"
+)
+plot_trial_3_red <- predicted_prob_bar(
+  fitted_model = list_fitted[["h_3"]][["trial_3_red"]]
+  , x_axis = "trial_3_red_stimuli"
+)
+plot_trial_3_blue <- predicted_prob_bar(
+  fitted_model = list_fitted[["h_3"]][["trial_3_blue"]]
+  , x_axis = "trial_3_blue_stimuli"
+  , treatment = "Blue"
+)
+plot_trial_2_red
+plot_trial_2_blue
+plot_trial_3_red
+plot_trial_3_blue
+```
+
+### Do partisans process co-partisan branding faster?
 
 The other analytical tasks do not examine expectations derived from the motivated reasoning portion of the model. That is, do people process in-group information faster than out-group information? There is evidence of these tendencies in political circumstances [@lodge_taber_2013_cup].
 
 To examine whether motivated reasoning is also active with the processing of politically-relevant color, I examine the difference between the amount of time between the start of viewing a stimulus and clicking "Next" to stop viewing the stimulus among those who were viewing a presumed co-partisan yard sign relative to those viewing a presumed out-partisan yard sign. As motivated reasoning tends to be more prevalent among strong partisans and those highly knowledgeable and interested in politics [@lodge_taber_2013_cup], I control for responses to the pre-treatment knowledge, interest, and partisan strength batteries.
 
-# Study 2
+## Study 2

@@ -80,10 +80,49 @@ list_ppc[["h_2"]][["blue_interact"]] <- pp_check(
     list_fitted[["h_2"]][["blue_interact"]]
 )
 # Hypothesis 3
-
+    #* Fit the models
+list_fitted[["h_3"]][["trial_2_red"]] <- brm(
+    formula = trial_2_party ~ trial_2_red_stimuli
+    , data = list_df[["cleaned"]]
+    , family = cumulative(link = "logit")
+    , prior = set_prior("normal(0, 1)", class = "b")
+    , backend = "cmdstanr"
+)red
+list_fitted[["h_3"]][["trial_2_blue"]] <- brm(
+    formula = trial_2_party ~ trial_2_blue_stimuli
+    , data = list_df[["cleaned"]]
+    , family = cumulative(link = "logit")
+    , prior = set_prior("normal(0, 1)", class = "b")
+    , backend = "cmdstanr"
+)
+list_fitted[["h_3"]][["trial_3_red"]] <- brm(
+    formula = trial_3_party ~ trial_3_red_stimuli
+    , data = list_df[["cleaned"]]
+    , family = cumulative(link = "logit")
+    , prior = set_prior("normal(0, 1)", class = "b")
+    , backend = "cmdstanr"
+)
+list_fitted[["h_3"]][["trial_3_blue"]] <- brm(
+    formula = trial_3_party ~ trial_3_blue_stimuli
+    , data = list_df[["cleaned"]]
+    , family = cumulative(link = "logit")
+    , prior = set_prior("normal(0, 1)", class = "b")
+    , backend = "cmdstanr"
+)
+    #* Posterior predictive checks
+list_ppc[["h_3"]][["trial_2_red"]] <- pp_check(
+    list_fitted[["h_3"]][["trial_2_red"]]
+)
+list_ppc[["h_3"]][["trial_2_blue"]] <- pp_check(
+    list_fitted[["h_3"]][["trial_3_blue"]]
+)
+list_ppc[["h_3"]][["trial_3_red"]] <- pp_check(
+    list_fitted[["h_3"]][["trial_3_red"]]
+)
+list_ppc[["h_3"]][["trial_3_blue"]] <- pp_check(
+    list_fitted[["h_3"]][["trial_3_blue"]]
+)
 # Hypothesis 4
-
-# Hypothesis 5
 
 # Store model results
 save(
