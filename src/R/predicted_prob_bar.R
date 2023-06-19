@@ -19,7 +19,7 @@ predicted_prob_bar <- function(
   fitted_model
   , x_axis
   , treatment = "Red"
-  , ordered = TRUE
+  , hypothesis = "H2"
   , level = 0.95
   , x_label = "Color of yard sign"
   , y_label = "Pr(Party of candidate)"
@@ -33,7 +33,7 @@ predicted_prob_bar <- function(
   data.table::as.data.table() # convert it to a data.table
   # If this is for a ordered logit, I'll have to do some stacked
   # barplots
-  if (ordered == TRUE) {
+  if (hypothesis == "H2") {
     #* Need to clean up the pred prob data.frame some
     df_pred_prob_cleaned <- df_pred_prob[
       #** aggregate the estimate, conf.low, and conf.high columns with
@@ -132,7 +132,72 @@ predicted_prob_bar <- function(
         , linetype = legend_title
         , fill = legend_title
       ) +
+      ggplot2::theme_minimal() 
+    # If it is a logistic regression with binary outcome
+  } else {
+    # Calculate the predicted probabilities of voting for the candidate
+    df_pred_prob <- marginaleffects::plot_predictions(
+      model = fitted_model
+      , condition = c("pid_7", x_axis)
+    ) +
+      #* define the line color for the plot
+      ggplot2::scale_color_manual(
+          labels = c(
+            "White"
+            , treatment
+          )
+          , values = c(
+            "#000000"
+            , "#000000"
+          )
+        ) +
+      #* add some custom x-axis tick labels
+      ggplot2::scale_x_continuous(
+        breaks = c(-3, 0, 3)
+        , labels = c(
+          "Strong Democrat"
+          , "Independent"
+          , "Strong Republican"
+        )
+      ) +
+      #* add some axis and legend labels
+      ggplot2::labs(
+        x = x_label
+        , y = y_label
+        , color = legend_title
+        , fill = legend_title
+      ) +
+      #* use the minimal theme
       ggplot2::theme_minimal()
+      #* Add some custom plot stuff depending on treatment
+    if (treatment == "Red") {
+        #** if red treatment, make the ribbon red
+      plot <- df_pred_prob + 
+        ggplot2::scale_fill_manual(
+          labels = c(
+            "White"
+            , "Red"
+          )
+          , values = c(
+            "#808080"
+            , "#ff0803"
+          )
+        )
+    } else {
+        #** if blue treatment, make the ribbon blue
+      plot <- df_pred_prob +
+        ggplot2::scale_fill_manual(
+          labels = c(
+            "White"
+            , "Blue"
+          )
+          , values = c(
+            "#808080"
+            , "#00AEF3"
+          )
+        )
+    }
   }
+  # Return the plot
   return(plot)
 }

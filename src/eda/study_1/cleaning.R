@@ -119,6 +119,12 @@ list_df[["cleaned"]] <- list_df[["cleaned"]][
     , vote == "The <strong>third </strong>yard sign", 3
   )
 ][
+  #** make dummy for trial 1 vote intention
+  , trial_1_vote := fcase(
+    vote == 1, 1
+    , vote != 1, 0
+  )
+][
   #** convert stimuli into dummies
   , trial_1_red_stimuli := fcase(
     trial_1_stimulus == "White", 0
@@ -150,12 +156,45 @@ list_df[["cleaned"]] <- list_df[["cleaned"]][
     , trial_3_stimulus == "Blue", 1
   )
 ][
+  , trial_1_red_stimuli_alt := fcase(
+    trial_1_stimulus != "Red", 0
+    , trial_1_stimulus == "Red", 1
+  )
+][
+  , trial_1_blue_stimuli_alt := fcase(
+    trial_1_stimulus != "Blue", 0
+    , trial_1_stimulus == "Blue", 1
+  )
+][
+  , trial_2_red_stimuli_alt := fcase(
+    trial_2_stimulus != "Red", 0
+    , trial_2_stimulus == "Red", 1
+  )
+][
+  , trial_2_blue_stimuli_alt := fcase(
+    trial_2_stimulus != "Blue", 0
+    , trial_2_stimulus == "Blue", 1
+  )
+][
+  , trial_3_red_stimuli_alt := fcase(
+    trial_3_stimulus != "Red", 0
+    , trial_3_stimulus == "Red", 1
+  )
+][
+  , trial_3_blue_stimuli_alt := fcase(
+    trial_3_stimulus != "Blue", 0
+    , trial_3_stimulus == "Blue", 1
+  )
+][
   #* Turn trial_#_party outcome into factor
   , trial_1_party := factor(trial_1_party, ordered = TRUE)
 ][
   , trial_2_party := factor(trial_2_party, ordered = TRUE)
 ][
   , trial_3_party := factor(trial_3_party, ordered = TRUE)
+][
+  # Turn trial_1_vote outcome into factor
+  , trial_1_vote := factor(trial_1_vote, ordered = TRUE)
 ]
 
 # Store the cleaned data in a RData temp file

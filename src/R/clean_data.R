@@ -80,13 +80,12 @@ stimuli_extractor <- function(data_frame = df_stimuli) {
 #' @param data_frame A data.table object that is essentially from
 #' the raw csv.
 #' @param var A string indicating which column to perform this on.
-#' @param time Is it the time column or not.
 #' 
 #' @return list_num A mean value of movement on that particular axis.
 #' 
 #' @examples
 #' 
-mouseview_handler <- function(data_frame = df_mouseview, var, time = FALSE) {
+mouseview_handler <- function(data_frame = df_mouseview, var) {
   # Make a list of the trials recorded (not three for everyone)
     #* Take the trials from the task column.
   list_trials <- data_frame$task |> 
@@ -105,24 +104,15 @@ mouseview_handler <- function(data_frame = df_mouseview, var, time = FALSE) {
     # Grab the data_frame at the specified column
     data_frame[[var]]
     , function(x) {
-      #* If it is not the time column, then do the following
-      if (time == FALSE) {
-        num <- x |> # grab the first to third trial data
-          data.table::tstrsplit(split = ",") |> # split the character column into a list
-          base::unlist() |> # unlist it to make it a vector
-          base::as.numeric() |> # convert the elements into numerics
-          base::diff() |> # take the difference between the numbers
-          base::abs() |> # take the absolute difference of it
-          base::mean(na.rm = TRUE) # calculate the mean value
-      #* If it is the time column, then do the following
-      } else {
-        num <- x |> #  grab the first to third trial data
-          data.table::tstrsplit(split = ",") |> # split the character column into a list
-          base::unlist() |> # unlist it to make it a vector
-          base::as.numeric() |> # convert the elements into numerics
-          base::sum(na.rm = TRUE) |> # sum the amount of time they took looking
-          base::mean(na.rm = TRUE) # calculate the mean value
-      }
+      num <- x |> # grab the first to third trial data
+        data.table::tstrsplit(split = ",") |> # split the character column into a list
+        base::unlist() |> # unlist it to make it a vector
+        base::as.numeric() |> # convert the elements into numerics
+        base::diff() |> # take the difference between the numbers
+        base::abs() |> # take the absolute difference of it
+        base::mean(na.rm = TRUE) # calculate the mean value
+
+
       # return num
       return(num)
     }
@@ -187,11 +177,7 @@ extract_file <- function(df_temp) {
   if (nrow(df_mouseview) > 0){
     list_mouseview_x <- mouseview_handler(data_frame = df_mouseview, var = "X")
     list_mouseview_y <- mouseview_handler(data_frame = df_mouseview, var = "Y")
-    list_mouseview_time <- mouseview_handler(
-      data_frame = df_mouseview
-      , var = "Time"
-      , time = TRUE
-    )
+    list_mouseview_time <- mouseview_handler(data_frame = df_mouseview, var = "Time")
     #* If they didn't do any of the mouseview trials, then make a named
     #* list with NA values filled in.
   } else {
@@ -218,6 +204,38 @@ extract_file <- function(df_temp) {
     #* then make a named list with NA values filled in instead.
   } else {
     list_trial_stimuli <- list(trial_1_stimulus = NA, trial_2_stimulus = NA, trial_3_stimulus = NA)
+  }
+  # Extract data on time taken between mouseview start and stop
+  if ("task" %in% colnames(df_dirty)) {
+    #* if it has a Mouseview-Start and Mouseview-Stop row
+    df_time <- df_dirty[
+        trial_type == "Mouseview-Start" | trial_type == "Mouseview-Stop", 
+      ][
+        #** take the difference between those rows per trial
+      , start_stop_diff := time_elapsed - data.table::shift(time_elapsed), by = task
+      ]
+        #** keep the Mouseview_Stop row as that is what will record what elapsed
+      df_time <- df_time[
+        trial_type == "Mouseview-Stop"
+      ]
+    #* grab the names of the trials
+    list_time_elapsed_names <- as.list(df_time$task)
+      #** clean the names of the trials to be good column names
+    list_time_elapsed_names <- base::lapply(
+      list_time_elapsed_names
+      , FUN = function(x) {
+        shortened <- gsub(" ", "_", x)
+        specific <- paste(shortened, "_time_elapsed", sep = "")
+        return(specific)
+      }
+    )
+      #* convert the rows into a list
+    list_time_elapsed <- as.list(df_time$start_stop_diff)
+      #* and name the list elements so that they can be column names later
+    names(list_time_elapsed) <- list_time_elapsed_names
+  } else {
+      #* if there isn't anything recording a task, just make an empty list and move on
+    list_time_elapsed <- list(trial_1_time_elapsed = NA, trial_2_time_elapsed = NA, trial_3_time_elapsed = NA)
   }
   # Have all the data, now time to organize it
     #* Need to make a standardized data.frame listing all of the variables.
@@ -339,6 +357,15 @@ extract_file <- function(df_temp) {
     , data.table::setDT(list_mouseview_time)
     , by = names(df_clean_y)
   ]
+      #** Add the named list of mouseview data for the total elapsed time.
+      #** I don't specify colum names here, it'll just use
+      #** the name index from the list. Have to do it with 
+      #** setDT and build on an existing dataframe with the names of the
+      #** existing data.frame.
+  df_clean_time_elapsed <- df_clean_time[
+    , data.table::setDT(list_time_elapsed)
+    , by = names(df_clean_time)
+  ]
       #** Add the named list of mouseview data for the stimuli.
       #** I don't specify column names here, it'll just use
       #** the name index from the list. Have to do it with
@@ -346,9 +373,9 @@ extract_file <- function(df_temp) {
       #** existing data.frame. Also, add in the participant_id and
       #** submission_id info while I am at it. This will help with merging
       #** the prolific demographic data in with it later.
-  df_clean <- df_clean_time[
+  df_clean <- df_clean_time_elapsed[
     , data.table::setDT(list_trial_stimuli)
-    , by = names(df_clean_time)
+    , by = names(df_clean_time_elapsed)
   ][
     , participant_id := participant_id
   ][
